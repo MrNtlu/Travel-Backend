@@ -1,0 +1,3 @@
+docker-compose up //run
+docker-compose up --build //rebuild
+docker-compose down //shutdown
