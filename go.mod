@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/gofiber/fiber/v2 v2.35.0 // indirect
+	github.com/google/uuid v1.3.0
 	github.com/h2non/bimg v1.1.9 // indirect
 	github.com/jasonlvhit/gocron v0.0.1 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
