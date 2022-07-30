@@ -5,8 +5,10 @@ import (
 	"io"
 	"os"
 	"strings"
+	"travel_backend/routes"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/google/uuid"
 	"github.com/h2non/bimg"
 )
@@ -56,8 +58,15 @@ func createFolder(dirname string) error {
 // https://medium.com/wesionary-team/aws-sdk-for-go-and-uploading-a-file-using-s3-bucket-df7425317a40
 // https://www.google.com/search?q=amazon+s3+image+compression&oq=amazon+s3+image+compression&aqs=edge.0.0i19j0i19i22i30l2j69i64l2.10257j0j4&sourceid=chrome&ie=UTF-8
 // If authenticated get from token jwt.ExtractClaims(c)["id"].(string)
+// https://github.com/gofiber/jwt
 func main() {
 	app := fiber.New()
+	app.Use(recover.New())
+
+	api := app.Group("/api") // /api
+	v1 := api.Group("/v1")   // /api/v1
+
+	routes.SetRoutes(v1)
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": "Hello, World 👋!"})
