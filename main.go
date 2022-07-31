@@ -5,9 +5,11 @@ import (
 	"io"
 	"os"
 	"strings"
+	"time"
 	"travel_backend/routes"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/google/uuid"
 	"github.com/h2non/bimg"
@@ -62,6 +64,10 @@ func createFolder(dirname string) error {
 func main() {
 	app := fiber.New()
 	app.Use(recover.New())
+	app.Use(limiter.New(limiter.Config{
+		Max:        20,
+		Expiration: 30 * time.Second,
+	}))
 
 	api := app.Group("/api") // /api
 	v1 := api.Group("/v1")   // /api/v1
