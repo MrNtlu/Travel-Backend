@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"database/sql"
 	"fmt"
+	"log"
 	"os"
 	"time"
 	"travel_backend/requests"
@@ -11,6 +13,31 @@ import (
 )
 
 type AuthController struct {
+	Database *sql.DB
+}
+
+func NewAuthController(database *sql.DB) AuthController {
+	return AuthController{
+		Database: database,
+	}
+}
+
+func (a *AuthController) DatabaseTest(c *fiber.Ctx) error {
+	var res string
+	var test []string
+
+	rows, err := a.Database.Query("SELECT * FROM users")
+	defer rows.Close()
+	if err != nil {
+		log.Fatalln(err)
+		c.JSON("An error occured")
+	}
+	for rows.Next() {
+		rows.Scan(&res)
+		test = append(test, res)
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": test})
 }
 
 func Login(c *fiber.Ctx) error {

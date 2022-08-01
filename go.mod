@@ -8,6 +8,7 @@ require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/lib/pq v1.10.6 // indirect
 )
 
 require (
@@ -16,7 +17,6 @@ require (
 	github.com/gofiber/fiber/v2 v2.35.0 // indirect
 	github.com/gofiber/jwt/v3 v3.2.13 // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
-	github.com/h2non/bimg v1.1.9 // indirect
 	github.com/jasonlvhit/gocron v0.0.1 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/klauspost/compress v1.15.9 // indirect

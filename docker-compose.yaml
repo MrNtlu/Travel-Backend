@@ -6,3 +6,30 @@ services:
       - 8080:8080
     volumes:
       - .:/app
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    env_file: 
+      - docker.env
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+  
+  postgres:
+    container_name: postgres
+    image: postgres:14.4-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      LC_ALL: C.UTF-8
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - data:/var/lib/postgresql/data
+  
+volumes:
+  data: {}

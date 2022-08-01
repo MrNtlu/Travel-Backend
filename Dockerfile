@@ -1,4 +1,4 @@
-FROM golang:1.18
+FROM --platform=linux/amd64 golang:1.18
 
 WORKDIR /app
 COPY go.mod .
