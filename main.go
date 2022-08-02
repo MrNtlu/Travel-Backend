@@ -3,28 +3,35 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"strings"
 	"time"
 	"travel_backend/databases"
+	"travel_backend/docs"
 	"travel_backend/routes"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/swagger"
 )
 
-func createFolder(dirname string) error {
-	_, err := os.Stat(dirname)
-	if os.IsNotExist(err) {
-		errDir := os.MkdirAll(dirname, 0755)
-		if errDir != nil {
-			return errDir
-		}
-	}
-	return nil
-}
+// @title Travel Logger API
+// @version 1.0
+// @description REST Api of Travel Logger.
 
+// @contact.name Burak Fidan
+// @contact.email mrntlu@gmail.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /api/v1
+// @schemes http
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	app := fiber.New()
 	app.Use(recover.New())
@@ -37,7 +44,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Database.Close()
+
+	sqlDB, err := db.Database.DB()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer sqlDB.Close()
 
 	api := app.Group("/api") // /api
 	v1 := api.Group("/v1")   // /api/v1
@@ -103,6 +115,9 @@ func main() {
 
 		return err
 	})
+
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	app.Listen(":8080")
 }

@@ -1,12 +1,11 @@
 package routes
 
 import (
-	"database/sql"
-
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
-func SetRoutes(router fiber.Router, db *sql.DB) {
+func SetRoutes(router fiber.Router, db *gorm.DB) {
 
 	setAuthRouter(router, db)
 }

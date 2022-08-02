@@ -5,9 +5,12 @@
 <ul>
     <li> gofiber/Fiber
     <li> gofiber/JWT
+    <li> gofiber/Swagger
+    <li> Gorm
     <li> lib/pq
     <li> Go-Nude
     <li> Godotenv
     <li> Gocron
     <li> uber/zap
+    <li> bcrypt
 </ul>

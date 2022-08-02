@@ -1,0 +1,120 @@
+basePath: /api/v1
+definitions:
+  requests.Login:
+    properties:
+      email_address:
+        type: string
+      password:
+        type: string
+    required:
+    - email_address
+    - password
+    type: object
+  requests.Register:
+    properties:
+      email_address:
+        type: string
+      fcm_token:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      username:
+        minLength: 3
+        type: string
+    required:
+    - email_address
+    - fcm_token
+    - first_name
+    - last_name
+    - password
+    - username
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: mrntlu@gmail.com
+    name: Burak Fidan
+  description: REST Api of Travel Logger.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Travel Logger API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Allows users to login and generate jwt token
+      parameters:
+      - description: User login credentials
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/requests.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: User Login
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Allows users to register
+      parameters:
+      - description: User registration info
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/requests.Register'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: User Registration
+      tags:
+      - auth
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

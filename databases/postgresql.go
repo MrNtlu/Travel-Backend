@@ -1,16 +1,16 @@
 package databases
 
 import (
-	"context"
-	"database/sql"
+	"fmt"
 	"strconv"
-	"time"
+	"travel_backend/models"
 
-	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 const (
-	host     = "postgres"
+	host     = "localhost"
 	port     = 5432
 	user     = "postgres"
 	password = "188Burak"
@@ -18,25 +18,22 @@ const (
 )
 
 type PostgreSQL struct {
-	Database *sql.DB
+	Database *gorm.DB
 }
 
 func SetDatabase() (*PostgreSQL, error) {
-	connectionString := "postgres://" + user + ":" + password + "@localhost:" + strconv.Itoa(port) + "/" + dbname + "?sslmode=disable"
-	// dockerConnectionString := "postgres://" + user + ":" + password + "@" + host + ":" + strconv.Itoa(port) + "/" + dbname + "?sslmode=disable"
+	dbConnection := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		host, user, password, dbname, strconv.Itoa(port),
+	)
 
-	db, err := sql.Open("postgres", connectionString)
+	db, err := gorm.Open(postgres.Open(dbConnection), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	err = db.PingContext(ctx)
-	if err != nil {
-		return nil, err
-	}
+	// Make migrations if necessary
+	db.AutoMigrate(&models.User{})
 
 	return &PostgreSQL{
 		Database: db,

@@ -1,14 +1,14 @@
 package routes
 
 import (
-	"database/sql"
 	"travel_backend/controllers"
 	"travel_backend/middlewares"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
-func setAuthRouter(router fiber.Router, db *sql.DB) {
+func setAuthRouter(router fiber.Router, db *gorm.DB) {
 	authController := controllers.NewAuthController(db)
 
 	auth := router.Group("/auth")
@@ -17,8 +17,7 @@ func setAuthRouter(router fiber.Router, db *sql.DB) {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": "Hello, World 👋!"})
 	})
 
-	auth.Post("/register", controllers.Register)
-	auth.Post("/login", controllers.Login)
+	auth.Post("/register", authController.Register)
+	auth.Post("/login", authController.Login)
 	auth.Get("/token", middlewares.JWTProtected(), controllers.TokenTest)
-	auth.Get("/test", authController.DatabaseTest)
 }
