@@ -12,20 +12,18 @@ import (
 
 type UserModel struct {
 	Database *gorm.DB
-	Table    string
 }
 
 func NewUserModel(database *gorm.DB) *UserModel {
 	return &UserModel{
 		Database: database,
-		Table:    "users",
 	}
 }
 
 type User struct {
 	gorm.Model
 
-	ID           uint   `gorm:"primaryKey"`
+	ID           int    `gorm:"primaryKey"`
 	EmailAddress string `gorm:"unique"`
 	Username     string `gorm:"unique"`
 	FirstName    string

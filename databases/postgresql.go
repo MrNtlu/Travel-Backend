@@ -34,6 +34,8 @@ func SetDatabase() (*PostgreSQL, error) {
 
 	// Make migrations if necessary
 	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.Location{})
+	db.AutoMigrate(&models.Image{})
 
 	return &PostgreSQL{
 		Database: db,
