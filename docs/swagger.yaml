@@ -10,6 +10,13 @@ definitions:
     - email_address
     - password
     type: object
+  requests.Pagination:
+    properties:
+      page:
+        type: integer
+    required:
+    - page
+    type: object
   requests.Register:
     properties:
       email_address:
@@ -110,6 +117,76 @@ paths:
       summary: User Registration
       tags:
       - auth
+  /image:
+    get:
+      consumes:
+      - application/json
+      description: Returns images by user id
+      parameters:
+      - description: Pagination
+        in: body
+        name: pagination
+        required: true
+        schema:
+          $ref: '#/definitions/requests.Pagination'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get Images by User ID
+      tags:
+      - image
+  /image/upload:
+    post:
+      consumes:
+      - application/json
+      description: Users can upload images
+      parameters:
+      - in: formData
+        name: description
+        type: string
+      - in: formData
+        name: locationID
+        required: true
+        type: integer
+      - in: formData
+        name: place
+        required: true
+        type: string
+      - description: Image File
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Upload Image
+      tags:
+      - image
 schemes:
 - http
 securityDefinitions:

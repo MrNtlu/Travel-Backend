@@ -21,9 +21,8 @@ func NewUserModel(database *gorm.DB) *UserModel {
 }
 
 type User struct {
-	gorm.Model
+	BaseModel
 
-	ID           int    `gorm:"primaryKey"`
 	EmailAddress string `gorm:"unique"`
 	Username     string `gorm:"unique"`
 	FirstName    string
@@ -34,7 +33,7 @@ type User struct {
 	FCMToken     string
 }
 
-func createUserObject(data requests.Register) *User {
+func (userModel *UserModel) createUserObject(data requests.Register) *User {
 	return &User{
 		EmailAddress: data.EmailAddress,
 		Username:     data.Username,
@@ -48,7 +47,7 @@ func createUserObject(data requests.Register) *User {
 }
 
 func (userModel *UserModel) CreateUser(data requests.Register) error {
-	user := createUserObject(data)
+	user := userModel.createUserObject(data)
 
 	result := userModel.Database.Create(&user)
 	if result.Error != nil {

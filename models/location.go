@@ -13,9 +13,8 @@ func NewLocationModel(database *gorm.DB) *LocationModel {
 }
 
 type Location struct {
-	gorm.Model
+	BaseModel
 
-	ID              int `gorm:"primaryKey"`
 	CountryISO2Code string
 	CountryISO3Code string
 	Country         string `gorm:"index:country_admin_city,unique"`
