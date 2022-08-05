@@ -6,6 +6,7 @@
     <li> gofiber/Fiber
     <li> gofiber/JWT
     <li> gofiber/Swagger
+    <li> AWS-SDK-Go
     <li> Gorm
     <li> lib/pq
     <li> Go-Nude

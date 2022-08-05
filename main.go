@@ -3,16 +3,21 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 	"travel_backend/databases"
 	"travel_backend/docs"
 	"travel_backend/routes"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/swagger"
+	"github.com/joho/godotenv"
 )
 
 // @title Travel Logger API
@@ -33,6 +38,13 @@ import (
 // @in header
 // @name Authorization
 func main() {
+	if os.Getenv("ENV") != "Production" {
+		if err := godotenv.Load(".env"); err != nil {
+			log.Default().Println(os.Getenv("ENV"))
+			log.Fatal("Error loading .env file")
+		}
+	}
+
 	app := fiber.New()
 	app.Use(recover.New())
 	app.Use(limiter.New(limiter.Config{
@@ -120,4 +132,24 @@ func main() {
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	app.Listen(":8080")
+}
+
+func ConnectAWS() *session.Session {
+	AccessKeyID := os.Getenv("AWS_ACCESS_KEY_ID")
+	SecretAccessKey := os.Getenv("AWS_SECRET_ACCESS_KEY")
+	MyRegion := os.Getenv("AWS_REGION")
+
+	sess, err := session.NewSession(
+		&aws.Config{
+			Region: aws.String(MyRegion),
+			Credentials: credentials.NewStaticCredentials(
+				AccessKeyID,
+				SecretAccessKey,
+				"", // a token will be created when the session it's used.
+			),
+		})
+	if err != nil {
+		panic(err)
+	}
+	return sess
 }

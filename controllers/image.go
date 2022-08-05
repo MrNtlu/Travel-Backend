@@ -76,7 +76,7 @@ func (i *ImageController) UploadImage(c *fiber.Ctx) error {
 // @Accept application/json
 // @Produce application/json
 // @Param pagination body requests.Pagination true "Pagination"
-// @Success 201 {string} string
+// @Success 200 {string} string
 // @Failure 400 {string} string
 // @Failure 500 {string} string
 // @Router /image [get]
@@ -98,6 +98,78 @@ func (i *ImageController) GetImagesByUserID(c *fiber.Ctx) error {
 	id := claims["id"].(float64)
 
 	images, err := imageModel.GetImagesByUserID(int(id), data.Page)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Images fetched successfully. 👋", "data": images})
+}
+
+// Get Images by Country
+// @Summary Get Images by Country
+// @Description Returns images by user id and country
+// @Tags image
+// @Accept application/json
+// @Produce application/json
+// @Param imagebycountry body requests.ImageByCountry true "Image by country"
+// @Success 200 {string} string
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /image/country [get]
+func (i *ImageController) GetImagesByCountry(c *fiber.Ctx) error {
+	var data requests.ImageByCountry
+	if err := c.QueryParser(&data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	errors := validateStruct(data)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(errors)
+	}
+
+	imageModel := models.NewImageModel(i.Database)
+
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	id := claims["id"].(float64)
+
+	images, err := imageModel.GetImagesByCountry(int(id), data.Page, data.Country)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Images fetched successfully. 👋", "data": images})
+}
+
+// Get Images by Location
+// @Summary Get Images by Location ID
+// @Description Returns images by user id and location id
+// @Tags image
+// @Accept application/json
+// @Produce application/json
+// @Param imagebylocation body requests.ImageByLocation true "Image by location id"
+// @Success 200 {string} string
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /image/location [get]
+func (i *ImageController) GetImagesByLocation(c *fiber.Ctx) error {
+	var data requests.ImageByLocation
+	if err := c.QueryParser(&data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	errors := validateStruct(data)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(errors)
+	}
+
+	imageModel := models.NewImageModel(i.Database)
+
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	id := claims["id"].(float64)
+
+	images, err := imageModel.GetImagesByLocation(int(id), data.Page, data.Location)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

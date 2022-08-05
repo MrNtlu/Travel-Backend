@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 	"travel_backend/requests"
+	"travel_backend/responses"
 	"travel_backend/utils"
 
 	"gorm.io/gorm"
@@ -23,9 +24,7 @@ type Image struct {
 	BaseModel
 
 	UserID      int       `json:"user_id"`
-	User        User      `json:"user" gorm:"constraint:OnDelete:CASCADE;foreignKey:UserID"`
 	LocationID  int       `json:"location_id"`
-	Location    Location  `json:"location" gorm:"constraint:OnDelete:CASCADE;"`
 	ImageURL    string    `json:"image_url" gorm:"unique"`
 	Place       string    `json:"place"`
 	Description *string   `json:"description"`
@@ -55,10 +54,38 @@ func (imageModel *ImageModel) CreateImage(data requests.ImageCreate, uid int) er
 	return nil
 }
 
-func (imageModel *ImageModel) GetImagesByUserID(uid, page int) ([]Image, error) {
-	var images []Image
+func (imageModel *ImageModel) GetImagesByUserID(uid, page int) ([]responses.Image, error) {
+	var images []responses.Image
 
 	result := imageModel.Database.Scopes(utils.Paginate(page)).Preload(clause.Associations).Where("user_id = ?", uid).Find(&images)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return images, nil
+}
+
+func (imageModel *ImageModel) GetImagesByCountry(uid, page int, country string) ([]Image, error) {
+	var images []Image
+
+	rawSQL := `Select * From Images as i
+	Inner Join Locations as l on l.id=i.location_id
+	Inner Join Users as u on u.id=i.user_id
+	Where country = ?`
+
+	result := imageModel.Database.Raw(rawSQL, country).Scan(&images)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return images, nil
+}
+
+func (imageModel *ImageModel) GetImagesByLocation(uid, page, locationID int) ([]Image, error) {
+	var images []Image
+
+	result := imageModel.Database.Scopes(utils.Paginate(page)).Preload(clause.Associations).
+		Where("user_id = ?", uid).Where("location_id = ?", locationID).Find(&images)
 	if result.Error != nil {
 		return nil, result.Error
 	}

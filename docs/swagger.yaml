@@ -1,5 +1,33 @@
 basePath: /api/v1
 definitions:
+  requests.ImageByCountry:
+    properties:
+      country:
+        type: string
+      page:
+        type: integer
+    required:
+    - country
+    - page
+    type: object
+  requests.ImageByLocation:
+    properties:
+      location:
+        minimum: 0
+        type: integer
+      page:
+        type: integer
+    required:
+    - location
+    - page
+    type: object
+  requests.LocationCountry:
+    properties:
+      country:
+        type: string
+    required:
+    - country
+    type: object
   requests.Login:
     properties:
       email_address:
@@ -132,8 +160,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
             type: string
         "400":
@@ -145,6 +173,66 @@ paths:
           schema:
             type: string
       summary: Get Images by User ID
+      tags:
+      - image
+  /image/country:
+    get:
+      consumes:
+      - application/json
+      description: Returns images by user id and country
+      parameters:
+      - description: Image by country
+        in: body
+        name: imagebycountry
+        required: true
+        schema:
+          $ref: '#/definitions/requests.ImageByCountry'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get Images by Country
+      tags:
+      - image
+  /image/location:
+    get:
+      consumes:
+      - application/json
+      description: Returns images by user id and location id
+      parameters:
+      - description: Image by location id
+        in: body
+        name: imagebylocation
+        required: true
+        schema:
+          $ref: '#/definitions/requests.ImageByLocation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get Images by Location ID
       tags:
       - image
   /image/upload:
@@ -187,6 +275,36 @@ paths:
       summary: Upload Image
       tags:
       - image
+  /location:
+    get:
+      consumes:
+      - application/json
+      description: Returns area and city list by country
+      parameters:
+      - description: Location Country
+        in: body
+        name: locationcountry
+        required: true
+        schema:
+          $ref: '#/definitions/requests.LocationCountry'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get Area and City List by Country
+      tags:
+      - location
 schemes:
 - http
 securityDefinitions:

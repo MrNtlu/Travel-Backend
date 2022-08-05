@@ -9,4 +9,5 @@ func SetRoutes(router fiber.Router, db *gorm.DB) {
 
 	setAuthRouter(router, db)
 	setImageRouter(router, db)
+	setLocationRouter(router, db)
 }

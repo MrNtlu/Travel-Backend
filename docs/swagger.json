@@ -142,8 +142,100 @@
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/image/country": {
+            "get": {
+                "description": "Returns images by user id and country",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "Get Images by Country",
+                "parameters": [
+                    {
+                        "description": "Image by country",
+                        "name": "imagebycountry",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.ImageByCountry"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/image/location": {
+            "get": {
+                "description": "Returns images by user id and location id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "Get Images by Location ID",
+                "parameters": [
+                    {
+                        "description": "Image by location id",
+                        "name": "imagebylocation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.ImageByLocation"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "type": "string"
                         }
@@ -223,9 +315,97 @@
                     }
                 }
             }
+        },
+        "/location": {
+            "get": {
+                "description": "Returns area and city list by country",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "location"
+                ],
+                "summary": "Get Area and City List by Country",
+                "parameters": [
+                    {
+                        "description": "Location Country",
+                        "name": "locationcountry",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.LocationCountry"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "requests.ImageByCountry": {
+            "type": "object",
+            "required": [
+                "country",
+                "page"
+            ],
+            "properties": {
+                "country": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer"
+                }
+            }
+        },
+        "requests.ImageByLocation": {
+            "type": "object",
+            "required": [
+                "location",
+                "page"
+            ],
+            "properties": {
+                "location": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "page": {
+                    "type": "integer"
+                }
+            }
+        },
+        "requests.LocationCountry": {
+            "type": "object",
+            "required": [
+                "country"
+            ],
+            "properties": {
+                "country": {
+                    "type": "string"
+                }
+            }
+        },
         "requests.Login": {
             "type": "object",
             "required": [

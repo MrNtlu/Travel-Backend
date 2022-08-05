@@ -15,4 +15,6 @@ func setImageRouter(router fiber.Router, db *gorm.DB) {
 
 	auth.Post("/upload", middlewares.JWTProtected(), imageController.UploadImage)
 	auth.Get("/", middlewares.JWTProtected(), imageController.GetImagesByUserID)
+	auth.Get("/country", middlewares.JWTProtected(), imageController.GetImagesByCountry)
+	auth.Get("/location", middlewares.JWTProtected(), imageController.GetImagesByLocation)
 }
