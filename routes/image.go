@@ -4,12 +4,13 @@ import (
 	"travel_backend/controllers"
 	"travel_backend/middlewares"
 
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
-func setImageRouter(router fiber.Router, db *gorm.DB) {
-	imageController := controllers.NewImageController(db)
+func setImageRouter(router fiber.Router, db *gorm.DB, awsSession *session.Session) {
+	imageController := controllers.NewImageController(db, awsSession)
 
 	auth := router.Group("/image")
 

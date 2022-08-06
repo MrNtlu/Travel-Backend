@@ -2,22 +2,28 @@ package controllers
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"travel_backend/models"
 	"travel_backend/requests"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 	"gorm.io/gorm"
 )
 
 type ImageController struct {
-	Database *gorm.DB
+	Database   *gorm.DB
+	AWSSession *session.Session
 }
 
-func NewImageController(database *gorm.DB) ImageController {
+func NewImageController(database *gorm.DB, session *session.Session) ImageController {
 	return ImageController{
-		Database: database,
+		Database:   database,
+		AWSSession: session,
 	}
 }
 
@@ -44,13 +50,13 @@ func (i *ImageController) UploadImage(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(errors)
 	}
 
-	file, err := c.FormFile("image")
+	fileHeader, err := c.FormFile("image")
 	if err != nil {
 		fmt.Println(err.Error())
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	headerType := file.Header["Content-Type"][0]
+	headerType := fileHeader.Header["Content-Type"][0]
 	if headerType != "" && !strings.HasPrefix(headerType, "image") {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Wrong file type."})
 	}
@@ -61,12 +67,38 @@ func (i *ImageController) UploadImage(c *fiber.Ctx) error {
 	claims := user.Claims.(jwt.MapClaims)
 	id := claims["id"].(float64)
 
-	data.Image = *file
+	data.Image = *fileHeader
+
+	uploader := s3manager.NewUploader(i.AWSSession)
+	bucket := os.Getenv("AWS_BUCKET_NAME")
+
+	file, err := fileHeader.Open()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	upload, err := uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String(bucket),
+		ACL:    aws.String("public-read"),
+		Key:    aws.String(data.Image.Filename),
+		Body:   file,
+	})
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to upload image. " + err.Error()})
+	}
+
+	/*TODO: After Image Uploaded -->
+	Send image URL to object
+	Set images to folder by UID
+	Delete image option
+	On user delete, delete user folder
+	*/
+
 	if err := imageModel.CreateImage(data, int(id)); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": "Image uploaded successfully. 👋"})
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": "Image uploaded successfully. 👋", "upload_location": aws.StringValue(&upload.Location)})
 }
 
 // Get Images

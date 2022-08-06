@@ -66,7 +66,9 @@ func main() {
 	api := app.Group("/api") // /api
 	v1 := api.Group("/v1")   // /api/v1
 
-	routes.SetRoutes(v1, db.Database)
+	awsSession := ConnectAWS()
+
+	routes.SetRoutes(v1, db.Database, awsSession)
 
 	//TODO: Remove
 	app.Post("/", func(c *fiber.Ctx) error {
@@ -151,5 +153,6 @@ func ConnectAWS() *session.Session {
 	if err != nil {
 		panic(err)
 	}
+
 	return sess
 }
