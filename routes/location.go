@@ -12,5 +12,7 @@ func setLocationRouter(router fiber.Router, db *gorm.DB) {
 
 	auth := router.Group("/location")
 
-	auth.Get("/", locationController.GetAreaCityList)
+	auth.Get("/area", locationController.GetAreaCityList)
+	auth.Get("/city", locationController.GetCityList)
+	auth.Get("/country", locationController.GetCountryList)
 }

@@ -28,11 +28,23 @@ type Location struct {
 	Longitude   float64 `json:"longitude"`
 }
 
+func (locationModel *LocationModel) GetCountryList() ([]responses.LocationCountry, error) {
+	var locationCountryList []responses.LocationCountry
+
+	rawSQL := `SELECT DISTINCT country FROM locations ORDER BY country ASC`
+
+	result := locationModel.Database.Raw(rawSQL).Scan(&locationCountryList)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return locationCountryList, nil
+}
+
 func (locationModel *LocationModel) GetAreaCityList(country string) ([]responses.LocationAreaCity, error) {
 	var locationAreaCityList []responses.LocationAreaCity
 
-	rawSQL := `Select admin as area, city FROM locations
-	Where country = ?`
+	rawSQL := `SELECT id, admin as area, city FROM locations WHERE country = ?`
 
 	result := locationModel.Database.Raw(rawSQL, country).Scan(&locationAreaCityList)
 	if result.Error != nil {
@@ -40,4 +52,20 @@ func (locationModel *LocationModel) GetAreaCityList(country string) ([]responses
 	}
 
 	return locationAreaCityList, nil
+}
+
+func (locationModel *LocationModel) GetCityList(country string) ([]responses.LocationCity, error) {
+	var locationCityList []responses.LocationCity
+
+	rawSQL := `SELECT DISTINCT ON (admin, country) id, admin as area, country
+	FROM locations
+	WHERE country = ? AND city=admin
+	ORDER BY country ASC, admin ASC`
+
+	result := locationModel.Database.Raw(rawSQL, country).Scan(&locationCityList)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return locationCityList, nil
 }

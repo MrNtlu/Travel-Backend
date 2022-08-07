@@ -12,6 +12,16 @@ type Location struct {
 }
 
 type LocationAreaCity struct {
+	ID   uint   `json:"id" gorm:"primarykey"`
 	Area string `json:"area"`
 	City string `json:"city"`
+}
+
+type LocationCity struct {
+	ID   uint   `json:"id" gorm:"primarykey"`
+	Area string `json:"area"`
+}
+
+type LocationCountry struct {
+	Country string `json:"country"`
 }

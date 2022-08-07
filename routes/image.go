@@ -18,4 +18,5 @@ func setImageRouter(router fiber.Router, db *gorm.DB, awsSession *session.Sessio
 	auth.Get("/", middlewares.JWTProtected(), imageController.GetImagesByUserID)
 	auth.Get("/country", middlewares.JWTProtected(), imageController.GetImagesByCountry)
 	auth.Get("/location", middlewares.JWTProtected(), imageController.GetImagesByLocation)
+	auth.Delete("/", middlewares.JWTProtected(), imageController.DeleteImageByID)
 }

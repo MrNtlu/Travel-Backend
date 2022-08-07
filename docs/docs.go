@@ -136,12 +136,53 @@ const docTemplate = `{
                 "summary": "Get Images by User ID",
                 "parameters": [
                     {
-                        "description": "Pagination",
-                        "name": "pagination",
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Returns image by user id and image id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "Delete Image by ID",
+                "parameters": [
+                    {
+                        "description": "Image by location id",
+                        "name": "imagebylocation",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/requests.Pagination"
+                            "$ref": "#/definitions/requests.ImageByLocation"
                         }
                     }
                 ],
@@ -154,6 +195,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "string"
                         }
@@ -182,13 +229,16 @@ const docTemplate = `{
                 "summary": "Get Images by Country",
                 "parameters": [
                     {
-                        "description": "Image by country",
-                        "name": "imagebycountry",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.ImageByCountry"
-                        }
+                        "type": "string",
+                        "name": "country",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -228,13 +278,17 @@ const docTemplate = `{
                 "summary": "Get Images by Location ID",
                 "parameters": [
                     {
-                        "description": "Image by location id",
-                        "name": "imagebylocation",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.ImageByLocation"
-                        }
+                        "minimum": 0,
+                        "type": "integer",
+                        "name": "location",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -320,7 +374,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/location": {
+        "/location/area": {
             "get": {
                 "description": "Returns area and city list by country",
                 "consumes": [
@@ -365,24 +419,90 @@ const docTemplate = `{
                     }
                 }
             }
-        }
-    },
-    "definitions": {
-        "requests.ImageByCountry": {
-            "type": "object",
-            "required": [
-                "country",
-                "page"
-            ],
-            "properties": {
-                "country": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "integer"
+        },
+        "/location/city": {
+            "get": {
+                "description": "Returns city list by country",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "location"
+                ],
+                "summary": "Get City List by Country",
+                "parameters": [
+                    {
+                        "description": "Location Country",
+                        "name": "locationcountry",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.LocationCountry"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 }
             }
         },
+        "/location/country": {
+            "get": {
+                "description": "Returns country list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "location"
+                ],
+                "summary": "Get Country List",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
         "requests.ImageByLocation": {
             "type": "object",
             "required": [
@@ -422,17 +542,6 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
-                }
-            }
-        },
-        "requests.Pagination": {
-            "type": "object",
-            "required": [
-                "page"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer"
                 }
             }
         },

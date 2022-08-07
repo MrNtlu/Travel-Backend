@@ -26,25 +26,25 @@ type Image struct {
 	UserID      int       `json:"user_id"`
 	LocationID  int       `json:"location_id"`
 	ImageURL    string    `json:"image_url" gorm:"unique"`
+	AWSImageKey string    `json:"aws_key" gorm:"unique"`
 	Place       string    `json:"place"`
 	Description *string   `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 
-func (imageModel *ImageModel) createImageObject(data requests.ImageCreate, imageURL string, uid int) *Image {
+func (imageModel *ImageModel) createImageObject(data requests.ImageCreate, awsKey, imageURL string, uid int) *Image {
 	return &Image{
 		UserID:      uid,
 		LocationID:  data.LocationID,
 		ImageURL:    imageURL,
+		AWSImageKey: awsKey,
 		Place:       data.Place,
 		Description: data.Description,
 	}
 }
 
-func (imageModel *ImageModel) CreateImage(data requests.ImageCreate, uid int) error {
-
-	//TODO Upload image and get URL
-	image := imageModel.createImageObject(data, data.Image.Filename, uid)
+func (imageModel *ImageModel) CreateImage(data requests.ImageCreate, awsKey, imageURL string, uid int) error {
+	image := imageModel.createImageObject(data, awsKey, imageURL, uid)
 
 	result := imageModel.Database.Create(&image)
 	if result.Error != nil {
@@ -52,6 +52,17 @@ func (imageModel *ImageModel) CreateImage(data requests.ImageCreate, uid int) er
 	}
 
 	return nil
+}
+
+func (imageModel *ImageModel) GetImageByID(uid, id int) (Image, error) {
+	var image Image
+
+	result := imageModel.Database.Where("user_id = ?", uid).Where("id = ?", id).First(&image)
+	if result.Error != nil {
+		return Image{}, result.Error
+	}
+
+	return image, nil
 }
 
 func (imageModel *ImageModel) GetImagesByUserID(uid, page int) ([]responses.Image, error) {
@@ -91,4 +102,13 @@ func (imageModel *ImageModel) GetImagesByLocation(uid, page, locationID int) ([]
 	}
 
 	return images, nil
+}
+
+func (imageModel *ImageModel) DeleteImageByID(uid, id int) error {
+	result := imageModel.Database.Where("user_id = ?", uid).Where("id = ?", id).Delete(&Image{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }
