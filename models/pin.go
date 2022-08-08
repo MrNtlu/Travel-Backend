@@ -3,8 +3,10 @@ package models
 import (
 	"time"
 	"travel_backend/requests"
+	"travel_backend/responses"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type PinModel struct {
@@ -27,6 +29,15 @@ type Pin struct {
 }
 
 func (pinModel *PinModel) createPinObject(data requests.PinCreate, uid int) *Pin {
+	if data.Date != nil {
+		return &Pin{
+			UserID:        uid,
+			LocationID:    data.LocationID,
+			IsPlanToVisit: *data.IsPlanToVisit,
+			Date:          data.Date,
+		}
+	}
+
 	return &Pin{
 		UserID:        uid,
 		LocationID:    data.LocationID,
@@ -43,4 +54,15 @@ func (pinModel *PinModel) CreatePin(data requests.PinCreate, uid int) error {
 	}
 
 	return nil
+}
+
+func (pinModel *PinModel) GetPinsByUserID(uid int) ([]responses.Pin, error) {
+	var pins []responses.Pin
+
+	result := pinModel.Database.Preload(clause.Associations).Where("user_id = ?", uid).Find(&pins)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return pins, nil
 }

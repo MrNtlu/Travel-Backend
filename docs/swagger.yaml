@@ -28,6 +28,17 @@ definitions:
     - email_address
     - password
     type: object
+  requests.PinCreate:
+    properties:
+      date:
+        type: string
+      is_plan_to_visit:
+        type: boolean
+      location_id:
+        type: integer
+    required:
+    - location_id
+    type: object
   requests.Register:
     properties:
       email_address:
@@ -377,6 +388,55 @@ paths:
       summary: Get Country List
       tags:
       - location
+  /pin:
+    get:
+      consumes:
+      - application/json
+      description: Get pins by user id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get Pins by User ID
+      tags:
+      - pin
+  /pin/create:
+    post:
+      consumes:
+      - application/json
+      description: Create pin
+      parameters:
+      - description: Pin Create
+        in: body
+        name: pincreate
+        required: true
+        schema:
+          $ref: '#/definitions/requests.PinCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create Pin
+      tags:
+      - pin
 schemes:
 - http
 securityDefinitions:

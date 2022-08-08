@@ -10,4 +10,5 @@ func SetRoutes(router fiber.Router, db *gorm.DB, awsSession *session.Session) {
 	setAuthRouter(router, db)
 	setImageRouter(router, db, awsSession)
 	setLocationRouter(router, db)
+	setPinRouter(router, db)
 }

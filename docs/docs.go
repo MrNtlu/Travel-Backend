@@ -500,6 +500,81 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/pin": {
+            "get": {
+                "description": "Get pins by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pin"
+                ],
+                "summary": "Get Pins by User ID",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/pin/create": {
+            "post": {
+                "description": "Create pin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pin"
+                ],
+                "summary": "Create Pin",
+                "parameters": [
+                    {
+                        "description": "Pin Create",
+                        "name": "pincreate",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.PinCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -542,6 +617,23 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "requests.PinCreate": {
+            "type": "object",
+            "required": [
+                "location_id"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "is_plan_to_visit": {
+                    "type": "boolean"
+                },
+                "location_id": {
+                    "type": "integer"
                 }
             }
         },

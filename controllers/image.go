@@ -242,7 +242,7 @@ func (i *ImageController) DeleteImageByID(c *fiber.Ctx) error {
 	}
 
 	if err := imageModel.DeleteImageByID(int(id), data.ID); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(errors)
+		return c.Status(fiber.StatusInternalServerError).JSON(err)
 	}
 
 	bucket := os.Getenv("AWS_BUCKET_NAME")
@@ -252,7 +252,7 @@ func (i *ImageController) DeleteImageByID(c *fiber.Ctx) error {
 		Bucket: aws.String(bucket),
 		Key:    aws.String(image.AWSImageKey),
 	}); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(errors)
+		return c.Status(fiber.StatusInternalServerError).JSON(err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": "Image deleted successfully."})

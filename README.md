@@ -9,7 +9,6 @@
     <li> AWS-SDK-Go
     <li> Gorm
     <li> lib/pq
-    <li> Go-Nude
     <li> Godotenv
     <li> Gocron
     <li> uber/zap
